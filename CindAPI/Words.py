@@ -5,9 +5,9 @@
 import logging 
 import psycopg2 as psy
 
-# add a word to the Words table in the Mind
+# set a word to the Words table in the Mind
 # return false if err
-def Add(wrd = None):
+def Set(wrd = None):
         if wrd is None:
             return False
         qry = "select clock from words where lect=\'"+str(wrd)+"\';"
@@ -21,20 +21,46 @@ def Add(wrd = None):
                 user = "postgres",
                 password = "dirty")
             cur = con.cursor()
-            cur.execute(qry,wrd)
+            cur.execute(qry)
             check = cur.fetchone()
-            print(check)
             if check is None:
                 cur.execute(add_new)
             else:
                 cur.execute(add_old)
             cur.close()
             con.commit()
+            return True
         except (Exception, psy.DatabaseError) as error:
-            logging.basicConfig(filename='cindapi.log',level=logging.DEBUG)
+            logging.basicConfig(filename='cindapierror.log',level=logging.DEBUG)
             logging.debug(error)
         finally:
             if con is not None:
                 con.close()
 
+# get word info from Words table in the Mind
+# return false if err
+def Get(wrd = None):
+        if wrd is None:
+                return False
+        qry = "select * from words where lect=\'"+str(wrd)+"\';"
+        con = None
+        try:
+            con = psy.connect(
+                    host = "localhost",
+                    database = "mind",
+                    user = "postgres",
+                    password = "dirty")
+            cur = con.cursor()
+            cur.execute(qry)
+            check = cur.fetchone()
+            if check is None:
+                    return False
+            return check
+        except (Exception, psy.DatabaseError) as error:
+            logging.basicConfig(filename='cindapierror.log',level=logging.DEBUG)
+            logging.debug(error)
+        finally:
+            if con is not None:
+                con.close()
 
+#EOF
