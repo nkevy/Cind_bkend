@@ -1,91 +1,53 @@
 import CindAPI as cpi
 
-# todo: move code to cpi
-
-# check if a string contains forbiden char(s) 
-# return False if string can be used
-def forbiden(ss = None):
-    if ss is None:
-        return True
-    if not isinstance(ss,str):
-        return True
-    avoid = [',','.','/','\\','[',']','+','-','=','\'','\"',';',':','?','!','@','#','$',' ','{','}']
-    return any(item in ss for item in avoid)
-
-# define an error for forbiden
-# thrown by methods checking string input
-class ForbidenError(Exception):
-    pass
-
-# convert word responce into word obj
-# stop rewriteing code
-def wordobj(wrd = None):
-    if wrd is None:
-        return None
-    ret = []
-    for item in wrd:
-        ret.append(str(item))
-    return ret
-
-# format a responce list into a list of word objects
-# stop rewriting code
-def formatwordlist(wrds == None):
-    if wrds is None:
-        return None 
-    ret = []
-    for item in wrds:
-        ret.append(wordobj(item))
-    return ret
-    
+##########################################
+##      Words                           ##
+##########################################
 # add a word to the Words table 
 # check if string is a valid word
-# raise error if cannot add to words
+# return false if cannot add to words
 def words_set(ss = None):
-    if forbiden(ss):
-        raise ForbidenError
-    if not cpi.Words.Set(ss):
-        raise Words.WordsError
-    return True
+    try:
+        cpi.Words.Set(ss)
+        return True
+    except (cpi.Words.ForbidenError) as error:
+        return False
 
 # get a word object from the Words table
-# check if string is a valid word
-# raise error if cannot get word
+# if word not found return None
 def words_get(ss = None):
-    if forbiden(ss):
-        raise ForbidenError
-    ret = cpi.Words.Get(ss)
-    if not ret:
-        raise Words.WordsError
-    return wordobj(ret)
+    try:
+        return cpi.Words.Get(SS)
+    except (cpi.Words.ForbidenError, cpi.Words.WordsError) as error:
+        return None
 
 # get most recent word added to Words table 
-# raise error if connot get word
+# if word not found return None
 def words_recent():
-    ret = cpi.Words.Recent()
-    if not ret:
-        raise Words.WordsError
-    return wordobj(ret)
+    try:
+        return cpi.Words.Recent()
+    except (cpi.Words.WordsErrror) as error:
+        return None
 
 # get a list of new words from Words table
 # raise error if cannot get word
 def words_novellist(size = None):
-    ret = cpi.Words.Novel()
-    if not ret:
-        raise Words.WordsError
-    return formatwordlist(ret)
+    try:
+        return cpi.Words.Novel(size)
+    except (cpi.Words.WordsError) as error:
+        return None
 
 # get a list of old words from Words table
 # raise error if cannot get word
-def words_oldlist():
-    ret = cpi.Words.Old(size = None):
-    if not ret:
-        raise Words.WordsError
-    return formatwordlist(ret)
+def words_oldlist(size):
+    try:
+        return cpi.Words.Old(size)
+    except (cpi.Words.WordsError) as error:
+        return None
 
 #############################################
 ##      Tests                              ##
 #############################################
-
 #
 # unit testing for words functions
 def unit_test_words(wrd):

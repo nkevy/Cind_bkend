@@ -10,11 +10,49 @@ import psycopg2 as psy
 class WordsError(Exception):
     pass
 
+# define an error for forbiden
+# thrown by methods checking string input
+class ForbidenError(Exception):
+    pass
+
+# check if a string contains forbiden char(s) 
+# raise tyoe error
+def forbiden(ss = None):
+    if ss is None:
+        raise TypeError
+    if not isinstance(ss,str):
+        raise TypeError
+    avoid = [',','.','/','\\','[',']','+','-','=','\'','\"',';',':','?','!','@','#','$',' ','{','}']
+    return any(item in ss for item in avoid)
+
+# convert word responce into word obj
+# stop rewriteing code
+def wordobj(wrd = None):
+    if wrd is None:
+        raise TypeError
+    ret = []
+    for item in wrd:
+        ret.append(str(item))
+    return ret
+
+## format a responce list into a list of word objects
+# stop rewriting code
+def formatwordlist(wrds == None):
+    if wrds is None:
+        raise TypeError
+    ret = []
+    for item in wrds:
+        ret.append(wordobj(item))
+    return ret
+    
 # set a word to the Words table in the Mind
-# return false if err
+# rasie type error is wrd is not a string
+# log error if cannot insert into words table
 def Set(wrd = None):
         if wrd is None:
-            return False
+            raise TypeError
+        if forbiden(wrd):
+            raise ForbidenError
         qry = "select clock from words where lect=\'"+str(wrd)+"\';"
         add_new = "insert into words(lect,clock,new,old) values(\'"+str(wrd)+"\',CURRENT_TIMESTAMP,true,false) returning clock;"
         add_old = "update words set clock=CURRENT_TIMESTAMP where lect=\'"+str(wrd)+"\';"
@@ -34,9 +72,8 @@ def Set(wrd = None):
                 cur.execute(add_old)
             cur.close()
             con.commit()
-            return True
         except (Exception, psy.DatabaseError) as error:
-            logging.basicConfig(filename='cindapierror.log',level=logging.DEBUG)
+            logging.basicConfig(filename='cindwords.log',level=logging.DEBUG)
             logging.debug(error)
         finally:
             if con is not None:
@@ -48,7 +85,7 @@ def Set(wrd = None):
 # DO NOT: update data or insert data
 def dbq(qry = None, size = None)
     if qry is None:
-        return None
+        raise TypeError
     con = None
     try:
         con = psy.connect(
@@ -58,16 +95,16 @@ def dbq(qry = None, size = None)
             password = "dirty")
         cur = con.cursor()
         cur.execute(qry)
-        if size is None:
-            return cur.fetchone()
+        if size is None or size is 1:
+            ret = wordobj(cur.fetchone())
+            return ret
         ret = []
         ret.append(cur.fetchall())
         if len(ret) > size:
-            return ret[0:size]
-        else:
-            return ret
-    except (Exception, psy.DatabaseError) as error:
-        logging.basicConfig(filename='cindapierror.log',level=logging.DEBUG)
+            return formatwordlist(ret[0:size])
+        return formatwordslist(ret)
+    except (Exception, TypeError, psy.DatabaseError) as error:
+        logging.basicConfig(filename='cindwords.log',level=logging.DEBUG)
         logging.debug(error)
     finally:
         if con is not None:
@@ -75,14 +112,17 @@ def dbq(qry = None, size = None)
 
 
 # get word info from Words table in the Mind
-# return false if err
+# raise type error if wrd is not a string
+# raise words error if result not found
 def Get(wrd = None):
         if wrd is None:
-                return False
+            raise TypeError
+        if forbiden(wrd):
+            raise ForbidenError
         qry = "select * from words where lect=\'"+str(wrd)+"\';"
         check = dbq(qry)
         if check is None:
-                return False
+            raise WordsError
         return check
 
 # get the most recent word info from Words table in the Mind
@@ -93,28 +133,26 @@ def Recent():
     qry = "select * from words where clock=(select MAX(clock) from words);"
     check = dbq(qry)
     if check is None:
-        return False
+        raise WordsError 
     return check
 
 # get all new words from Words table in Mind
 # most recently used words first
-# return false if err
-def Novel():
-    # todo: decide how many to return, 10 for now
+# raise words error if result not found
+def Novel(size = None):
     qry = "select * from words where new=True order by clock;"
-    check = dbq(qry,10)
+    check = dbq(qry,size)
     if check is None:
-        return False
+        raise WordsError
     return check
 
 # get all old words
 # most recently used words first
 # return false if err
-def Old():
-    # todo: decide how many to return, 10 for now
+def Old(size = None):
     qry = "select * from words where old=True order by clock;"
-    check = dbq(qry,10)
+    check = dbq(qry,size)
     if check is None
-        return False
+        raise WordsError
     return check
 #EOF
