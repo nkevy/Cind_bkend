@@ -8,12 +8,16 @@ import psycopg2 as psy
 # define error type WordsError
 # thrown by encapusulation of Words.py
 class WordsError(Exception):
-    pass
+    def __init__(self, expression, message):
+        self.expression = expression
+        self.message = message
 
 # define an error for forbiden
 # thrown by methods checking string input
 class ForbidenError(Exception):
-    pass
+    def __init__(self, expression, message):
+        self.expression = expression
+        self.message = message
 
 # check if a string contains forbiden char(s) 
 # raise tyoe error
@@ -102,7 +106,7 @@ def dbq(qry = None, size = None):
         ret.append(cur.fetchall())
         if len(ret) > size:
             return formatwordlist(ret[0:size])
-        return formatwordslist(ret)
+        return formatwordlist(ret)
     except (Exception, TypeError, psy.DatabaseError) as error:
         logging.basicConfig(filename='cindwords.log',level=logging.DEBUG)
         logging.debug(error)
@@ -122,7 +126,7 @@ def Get(wrd = None):
         qry = "select * from words where lect=\'"+str(wrd)+"\';"
         check = dbq(qry)
         if check is None:
-            raise WordsError
+            raise WordsError("get none")
         return check
 
 # get the most recent word info from Words table in the Mind
@@ -133,7 +137,7 @@ def Recent():
     qry = "select * from words where clock=(select MAX(clock) from words);"
     check = dbq(qry)
     if check is None:
-        raise WordsError 
+        raise WordsError("recent none") 
     return check
 
 # get all new words from Words table in Mind
@@ -143,7 +147,7 @@ def Novel(size = None):
     qry = "select * from words where new=True order by clock;"
     check = dbq(qry,size)
     if check is None:
-        raise WordsError
+        raise WordsError("novel none")
     return check
 
 # get all old words
@@ -153,6 +157,6 @@ def Old(size = None):
     qry = "select * from words where old=True order by clock;"
     check = dbq(qry,size)
     if check is None:
-        raise WordsError
+        raise WordsError("old none")
     return check
 #EOF
