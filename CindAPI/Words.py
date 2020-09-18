@@ -8,14 +8,14 @@ import psycopg2 as psy
 # define error type WordsError
 # thrown by encapusulation of Words.py
 class WordsError(Exception):
-    def __init__(self, expression, message):
+    def __init__(self, expression = None, message = "words error"):
         self.expression = expression
         self.message = message
 
 # define an error for forbiden
 # thrown by methods checking string input
 class ForbidenError(Exception):
-    def __init__(self, expression, message):
+    def __init__(self, expression = None, message = "forbiden error string not valid"):
         self.expression = expression
         self.message = message
 
@@ -42,7 +42,7 @@ def wordobj(wrd = None):
 ## format a responce list into a list of word objects
 # stop rewriting code
 def formatwordlist(wrds = None):
-    if wrds is None if len(wrds) is 0:
+    if wrds is None or len(wrds[0]) is 0:
         raise TypeError
     ret = []
     for item in wrds:

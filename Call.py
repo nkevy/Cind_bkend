@@ -1,4 +1,5 @@
 import CindAPI as cpi
+import logging
 
 ##########################################
 ##      Words                           ##
@@ -73,7 +74,7 @@ def unit_test_words(wrd,num):
         ret = words_oldlist(num)
         print("returned:",end='')
         print(ret)
-    except (Exception, Words.WordsError, ForbidenError) as error:
+    except (Exception, cpi.Words.WordsError, cpi.Words.ForbidenError) as error:
         logging.basicConfig(filename='unit_test_words.log', level=logging.DEBUG)
         logging.debug(error)
 
