@@ -42,7 +42,7 @@ def wordobj(wrd = None):
 ## format a responce list into a list of word objects
 # stop rewriting code
 def formatwordlist(wrds = None):
-    if wrds is None:
+    if wrds is None if len(wrds) is 0:
         raise TypeError
     ret = []
     for item in wrds:
