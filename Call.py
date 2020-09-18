@@ -17,7 +17,7 @@ def words_set(ss = None):
 # if word not found return None
 def words_get(ss = None):
     try:
-        return cpi.Words.Get(SS)
+        return cpi.Words.Get(ss)
     except (cpi.Words.ForbidenError, cpi.Words.WordsError) as error:
         return None
 
@@ -39,7 +39,7 @@ def words_novellist(size = None):
 
 # get a list of old words from Words table
 # raise error if cannot get word
-def words_oldlist(size):
+def words_oldlist(size = None):
     try:
         return cpi.Words.Old(size)
     except (cpi.Words.WordsError) as error:
@@ -50,7 +50,7 @@ def words_oldlist(size):
 #############################################
 #
 # unit testing for words functions
-def unit_test_words(wrd):
+def unit_test_words(wrd,num):
     try:
         print("test words table functions:")
         print("set the word:"+wrd)
@@ -66,20 +66,20 @@ def unit_test_words(wrd):
         print("returned:",end='')
         print(ret)
         print("get novel word list:")
-        ret = words_novellist()
+        ret = words_novellist(num)
         print("returned:",end='')
         print(ret)
         print("get old word list:")
-        ret = words_oldlist()
+        ret = words_oldlist(num)
         print("returned:",end='')
         print(ret)
     except (Exception, Words.WordsError, ForbidenError) as error:
-        logging.basicConfig(filename='unit_test_words.log',logging.DEBUG)
+        logging.basicConfig(filename='unit_test_words.log', level=logging.DEBUG)
         logging.debug(error)
 
 ###########################################
 # run tests 
 if __name__ == "__main__":
     print("API Testing...")
-    unit_test_words('word')
+    unit_test_words('word',2)
     

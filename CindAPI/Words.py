@@ -37,7 +37,7 @@ def wordobj(wrd = None):
 
 ## format a responce list into a list of word objects
 # stop rewriting code
-def formatwordlist(wrds == None):
+def formatwordlist(wrds = None):
     if wrds is None:
         raise TypeError
     ret = []
@@ -83,7 +83,7 @@ def Set(wrd = None):
 # size allows limit of responce size
 # stop rewriting same code
 # DO NOT: update data or insert data
-def dbq(qry = None, size = None)
+def dbq(qry = None, size = None):
     if qry is None:
         raise TypeError
     con = None
@@ -152,7 +152,7 @@ def Novel(size = None):
 def Old(size = None):
     qry = "select * from words where old=True order by clock;"
     check = dbq(qry,size)
-    if check is None
+    if check is None:
         raise WordsError
     return check
 #EOF
