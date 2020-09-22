@@ -1,4 +1,4 @@
 from .Words import *
-from .Association import *
+from .Memory import *
 from .Error import *
 #EOF
