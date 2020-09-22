@@ -13,6 +13,8 @@ class word:
         self.clock = c
         self.new = bool(n)
         self.old = bool(o)
+    def __str__(self):
+        return "{} {} {} {}".format(self.value, self.clock, self.new, self.old)
 
 # convert word responce into word obj
 # stop rewriteing code
@@ -94,6 +96,8 @@ def Novel(size = None):
     check = dbq(qry,size)
     if check is None or len(check) == 0:
         raise WordsError("novel none")
+    if not isinstance(check,list):
+        return wordobj(check)
     return formatwordlist(check)
 
 # get all old words
@@ -104,5 +108,7 @@ def Old(size = None):
     check = dbq(qry,size)
     if check is None or len(check) == 0:
         raise WordsError("old none")
+    if not isinstance(check,list):
+        return wordobj(check)
     return formatwordlist(check)
 #EOF

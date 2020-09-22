@@ -5,24 +5,24 @@
 import logging 
 import psycopg2 as psy
 
-# define error type AssociationError
-# thrown when using Association.py
-class AssociationError(Exception):
-    def __init__(self, expression = None, message = "Association error"):
+# define error type MemoriesError
+# thrown when using Memory.py
+class MemoriesError(Exception):
+    def __init__(self, expression = None, message = "Memory error"):
         self.expression = expression
         self.message = message
 
 # define error type WordsError
 # thrown when using Words.py
 class WordsError(Exception):
-    def __init__(self, expression = None, message = "words error"):
+    def __init__(self, expression = None, message = "Words error"):
         self.expression = expression
         self.message = message
 
 # define an error for forbiden
 # thrown by methods checking string input
 class ForbidenError(Exception):
-    def __init__(self, expression = None, message = "forbiden error string not valid"):
+    def __init__(self, expression = None, message = "Forbiden error string not valid"):
         self.expression = expression
         self.message = message
 
