@@ -2,47 +2,29 @@
 ## Noah Kevy ##
 ## 2020      ##
 ###############
-import logging 
+from .Error import *
+from .Postgres import *
 import psycopg2 as psy
+import logging 
 
-# define error type WordsError
-# thrown by encapusulation of Words.py
-class WordsError(Exception):
-    def __init__(self, expression = None, message = "words error"):
-        self.expression = expression
-        self.message = message
-
-# define an error for forbiden
-# thrown by methods checking string input
-class ForbidenError(Exception):
-    def __init__(self, expression = None, message = "forbiden error string not valid"):
-        self.expression = expression
-        self.message = message
-
-# check if a string contains forbiden char(s) 
-# raise tyoe error
-def forbiden(ss = None):
-    if ss is None:
-        raise TypeError
-    if not isinstance(ss,str):
-        raise TypeError
-    avoid = [',','.','/','\\','[',']','+','-','=','\'','\"',';',':','?','!','@','#','$',' ','{','}']
-    return any(item in ss for item in avoid)
+class word:
+    def __init__(self, w: str, c: str, n:str, o:str):
+        self.value = w
+        self.clock = c
+        self.new = bool(n)
+        self.old = bool(o)
 
 # convert word responce into word obj
 # stop rewriteing code
 def wordobj(wrd = None):
     if wrd is None:
         raise TypeError
-    ret = []
-    for item in wrd:
-        ret.append(str(item))
-    return ret
+    return word(wrd[0], wrd[1], wrd[2], wrd[3])
 
 ## format a responce list into a list of word objects
 # stop rewriting code
 def formatwordlist(wrds = None):
-    if wrds is None or len(wrds[0]) is 0:
+    if wrds is None:
         raise TypeError
     ret = []
     for item in wrds:
@@ -52,9 +34,7 @@ def formatwordlist(wrds = None):
 # set a word to the Words table in the Mind
 # rasie type error is wrd is not a string
 # log error if cannot insert into words table
-def Set(wrd = None):
-        if wrd is None:
-            raise TypeError
+def Set(wrd: str):
         if forbiden(wrd):
             raise ForbidenError
         qry = "select clock from words where lect=\'"+str(wrd)+"\';"
@@ -83,51 +63,17 @@ def Set(wrd = None):
             if con is not None:
                 con.close()
 
-# qry and return responce
-# size allows limit of responce size
-# stop rewriting same code
-# DO NOT: update data or insert data
-def dbq(qry = None, size = None):
-    if qry is None:
-        raise TypeError
-    con = None
-    try:
-        con = psy.connect(
-            host = "localhost",
-            database = "mind",
-            user = "postgres",
-            password = "dirty")
-        cur = con.cursor()
-        cur.execute(qry)
-        if size is None or size is 1:
-            ret = wordobj(cur.fetchone())
-            return ret
-        ret = []
-        ret.append(cur.fetchall())
-        if len(ret) > size:
-            return formatwordlist(ret[0:size])
-        return formatwordlist(ret)
-    except (Exception, TypeError, psy.DatabaseError) as error:
-        logging.basicConfig(filename='cindwords.log',level=logging.DEBUG)
-        logging.debug(error)
-    finally:
-        if con is not None:
-            con.close
-
-
 # get word info from Words table in the Mind
 # raise type error if wrd is not a string
 # raise words error if result not found
-def Get(wrd = None):
-        if wrd is None:
-            raise TypeError
+def Get(wrd: str):
         if forbiden(wrd):
             raise ForbidenError
         qry = "select * from words where lect=\'"+str(wrd)+"\';"
         check = dbq(qry)
         if check is None:
             raise WordsError("get none")
-        return check
+        return wordobj(check)
 
 # get the most recent word info from Words table in the Mind
 # return false if err
@@ -138,7 +84,7 @@ def Recent():
     check = dbq(qry)
     if check is None:
         raise WordsError("recent none") 
-    return check
+    return wordobj(check)
 
 # get all new words from Words table in Mind
 # most recently used words first
@@ -146,9 +92,9 @@ def Recent():
 def Novel(size = None):
     qry = "select * from words where new=True order by clock;"
     check = dbq(qry,size)
-    if check is None:
+    if check is None or len(check) == 0:
         raise WordsError("novel none")
-    return check
+    return formatwordlist(check)
 
 # get all old words
 # most recently used words first
@@ -156,7 +102,7 @@ def Novel(size = None):
 def Old(size = None):
     qry = "select * from words where old=True order by clock;"
     check = dbq(qry,size)
-    if check is None:
+    if check is None or len(check) == 0:
         raise WordsError("old none")
-    return check
+    return formatwordlist(check)
 #EOF

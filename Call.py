@@ -11,7 +11,7 @@ def words_set(ss = None):
     try:
         cpi.Words.Set(ss)
         return True
-    except (cpi.Words.ForbidenError) as error:
+    except (cpi.Error.ForbidenError) as error:
         return False
 
 # get a word object from the Words table
@@ -19,7 +19,7 @@ def words_set(ss = None):
 def words_get(ss = None):
     try:
         return cpi.Words.Get(ss)
-    except (cpi.Words.ForbidenError, cpi.Words.WordsError) as error:
+    except (cpi.Error.ForbidenError, cpi.Error.WordsError) as error:
         return None
 
 # get most recent word added to Words table 
@@ -27,7 +27,7 @@ def words_get(ss = None):
 def words_recent():
     try:
         return cpi.Words.Recent()
-    except (cpi.Words.WordsErrror) as error:
+    except (cpi.Error.WordsErrror) as error:
         return None
 
 # get a list of new words from Words table
@@ -35,7 +35,7 @@ def words_recent():
 def words_novellist(size = None):
     try:
         return cpi.Words.Novel(size)
-    except (cpi.Words.WordsError) as error:
+    except (cpi.Error.WordsError) as error:
         return None
 
 # get a list of old words from Words table
@@ -43,7 +43,7 @@ def words_novellist(size = None):
 def words_oldlist(size = None):
     try:
         return cpi.Words.Old(size)
-    except (cpi.Words.WordsError) as error:
+    except (cpi.Error.WordsError) as error:
         return None
 
 #############################################
@@ -74,7 +74,7 @@ def unit_test_words(wrd,num):
         ret = words_oldlist(num)
         print("returned:",end='')
         print(ret)
-    except (Exception, cpi.Words.WordsError, cpi.Words.ForbidenError) as error:
+    except (cpi.Error.WordsError, cpi.Error.ForbidenError) as error:
         logging.basicConfig(filename='unit_test_words.log', level=logging.DEBUG)
         logging.debug(error)
 
