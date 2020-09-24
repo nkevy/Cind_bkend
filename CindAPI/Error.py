@@ -19,6 +19,13 @@ class WordsError(Exception):
         self.expression = expression
         self.message = message
 
+# define error type SleepError
+# thrown when using Sleep.py
+class SleepError(Exception):
+    def __init__(self, expression = None, message = "Sleep Error"):
+        self.expression = expression
+        self.message = message
+
 # define an error for forbiden
 # thrown by methods checking string input
 class ForbidenError(Exception):
