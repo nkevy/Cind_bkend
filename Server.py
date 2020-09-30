@@ -8,54 +8,55 @@ import sys
 ## route for set word to words table
 @route('/setword',method='POST')
 def words_set_route():
-    return call.words_set(request.forms.get('word'))
+    return call.words_set(str(request.forms.get('word')))
 
 ## route for get word from words table
 @route('/getword',method='POST')
 def words_get_route():
-    return call.words_get(request.forms.get('word'))
+    return call.words_get(str(request.forms.get('word')))
 
 ## route for get recent word from words table
-@route('/recentword')
+@route('/recentword',method='POST')
 def words_recent_route():
     return call.words_recent()
 
 ## route for get list of novel words from words table
 @ route('/novelword',method='POST')
 def words_novel_route():
-    temp = request.forms.get('size')
-    if isinstance(temp,int):
-        return call.words_novel(request.forms.get('size'))
-    else:
-        return ({'Error':'Please send an integer'})
+    print(request.forms.get('size'))
+    return call.words_novellist(int(request.forms.get('size')))
 
 ## route for get list of old words from words table
 @ route('/oldword',method='POST')
 def words_old_route():
-    return call.words_old(request.forms.get('size'))
+    return call.words_oldlist(int(request.forms.get('size')))
 
 ## route for set a memory to memory table
-@ route('setmemory', method='POST')
+@ route('/setmemory', method='POST')
+def memory_set_route():
     return call.memory_set(
-            request.forms.get('word1'),
-            request.forms.get('word2'),
-            request.forms.get('decrement'))
+            str(request.forms.get('word1')),
+            str(request.forms.get('word2')),
+            bool(request.forms.get('decrement')))
 
 ## route for get a memory from memory table
-@ route('getmemory',method='POST')
-    return call.memory_set(
-            request.forms.get('word1'),
-            request.forms.get('word2'))
+@ route('/getmemory',method='POST')
+def memory_get_route():
+    return call.memory_get(
+            str(request.forms.get('word1')),
+            str(request.forms.get('word2')))
 
 ## route for get a list of memories from memory table
-@ route('getlistmemory',method='POST')
+@ route('/getlistmemory',method='POST')
+def memory_getlist_route():
     return call.memory_getlist(
-            request.forms.get('word1'),
-            requests.forms.get('size'))
+            str(request.forms.get('word1')),
+            int(request.forms.get('size')))
 
 ## route for get a sleep list, request a sleep
 @ route('/sleep',method='POST')
-    return call.sleep_list(request.forms.get('size'))
+def sleep_route():
+    return call.sleep_list(int(request.forms.get('size')))
 
 # todo: write routes for all api calls
 if __name__ == '__main__':

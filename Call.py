@@ -1,77 +1,99 @@
 import CindAPI as cpi
 import logging
+import json
+
+
+##########################################
+## help convert to json                 ##
+##########################################
+def to_json(ll: list):
+    ret = []
+    for i in ll:
+        ret.append(i.json())
+    return ret
+
 
 ##########################################
 ##      Words                           ##
 ##########################################
 # add a word to the Words table 
-# return false if cannot add to words
+# return json 
 def words_set(ss: str):
     try:
         cpi.Words.Set(ss)
-        return True
+        return json.dumps([{'success' : True}])
     except (cpi.Error.ForbidenError) as error:
-        return False
+        return json.dumps({'success' : False})
 
 # get a word object from the Words table
-# if word not found return None
+# put word object in list format 
+# if return json
 def words_get(ss: str):
     try:
-        return cpi.Words.Get(ss)
+        ret = to_json([cpi.Words.Get(ss)])
+        return json.dumps([{'success' : True}] + ret)
     except (cpi.Error.ForbidenError, cpi.Error.WordsError) as error:
-        return None
+        return json.dumps({'success' : False})
 
 # get most recent word added to Words table 
-# return None if get fails
+# put word object in list format
+# return json
 def words_recent():
     try:
-        return cpi.Words.Recent()
+        ret = to_json([cpi.Words.Recent()])
+        return json.dumps([{'success' : True}] + ret)
     except (cpi.Error.WordsErrror) as error:
-        return None
+        return json.dumps([{'success' : False}])
 
 # get a list of new words from Words table
-# return None if get fails
+# return json
 def words_novellist(size = None):
     try:
-        return cpi.Words.Novel(size)
+        ret = to_json(cpi.Words.Novel(size))
+        return json.dumps([{'success' : True}] + ret)
     except (cpi.Error.WordsError) as error:
-        return None
+        return json.dumps([{'success' : False}])
 
 # get a list of old words from Words table
-# return None if get fails
+# return json
 def words_oldlist(size = None):
     try:
-        return cpi.Words.Old(size)
+        ret = to_json(cpi.Words.Old(size))
+        return json.dumps([{'success' : True}] + ret)
     except (cpi.Error.WordsError) as error:
-        return None
+        return json.dumps([{'success' : False}])
 
 #############################################
 ##      Memory                             ##
 #############################################
 
 # add a memory to the Memory table  
-# return false if cannot add word
+# return json
 def memory_set(w1:str, w2:str, decrement=False):
     try:
-        return cpi.Memory.Set(w1,w2,decrement)
+        cpi.Memory.Set(w1,w2,decrement)
+        return json.dumps([{'success' : True}])
     except (cpi.Error.ForbidenError) as error:
-        return False
+        return json.dumps([{'success' : False}])
 
 # get a memory from the Memory table
-# return None if get fails
+# put memory object in list format
+# return json
 def memory_get(w1:str, w2:str):
     try:
-        return cpi.Memory.Get(w1,w2)
+        ret = to_json([cpi.Memory.Get(w1,w2)])
+        return json.dumps([{'success' : True}] + ret)
     except (cpi.Error.MemoriesError) as error:
-        return None
+        return json.dumps([{'success' : False}])
 
 # get a list of memories from the Memory table
-# return none if get fails
+# return json
 def memory_getlist(w1: str,size = None):
     try: 
-        return cpi.Memory.GetList(w1,size)
+        ret = to_json(cpi.Memory.GetList(w1,size))
+        return json.dumps([{'success' : True}] + ret)
     except (cpi.Error.MemoriesError) as error:
-        return None
+        return json.dumps([{'success' : False}])
 
 #############################################
 ##      Sleep                              ##
@@ -82,9 +104,10 @@ def memory_getlist(w1: str,size = None):
 # return dream if slept
 def sleep_list(dreamsize: int):
     try:
-        return cpi.Sleep.sleep(dreamsize) 
+        ret = to_json(cpi.Sleep.sleep(dreamsize))
+        return json.dumps([{'success' : True}] + ret)
     except (cpi.Error.SleepError) as error:
-        return None
+        return json.dumps([{'success' : False}])
 
 
 #############################################

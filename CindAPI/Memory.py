@@ -18,8 +18,8 @@ class memory:
         self.src = w1
         self.dst = w2
         self.rank = r
-    def __str__(self):
-        return "{} {} {}".format(self.src, self.dst, self.rank)
+    def json(self):
+        return {'word1' : self.src, 'word2' : self.dst, 'rank' : self.rank}
 
 # create a memory object from a sql entry 
 # return a memory object
@@ -57,7 +57,6 @@ def Set(w1: str, w2, decrement = False):
         ins = "update memory set dyad="+str(rank)+" where src=\'"+w1+"\' and dst=\'"+w2+"\';"
     if not dbupdate(ins):
         raise MemoriesError("set of memory failed")
-    return True
 
 # get a memory from the Memory table in mind
 # raise an error if unable to get
@@ -81,6 +80,6 @@ def GetList(w1: str, size=None):
     if check is None:
         raise MemoriesError("get list of memories faild")
     if not isinstance(check,list):
-        return memobj(check)
+        return [memobj(check)]
     return formatmemlist(check)
 #EOF
