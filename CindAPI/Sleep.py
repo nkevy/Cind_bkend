@@ -11,7 +11,7 @@ def sleep(dream: int):
     try:
         wordlist = Novel(size = dream)
         if len(wordlist) == 1:
-            raise SleepError
+            raise SleepError()
         ins = "update words set new=False, old=True where lect=\'{}\';"
         ins_cat = ""
         for w in wordlist:
@@ -21,10 +21,9 @@ def sleep(dream: int):
         ins_cat = ""
         for i in range(1,len(wordlist)):
             ins_cat = ins_cat + ins.format(wordlist[i-1].value,wordlist[i].value)
-        print(ins_cat)
         dbupdate(ins_cat)
         return wordlist
     except (WordsError, SleepError) as error:
-        raise SleepError("no novel words, cant sleep not tired")
+        raise SleepError("sleep error, to few novel words, cant sleep not tired")
 
 

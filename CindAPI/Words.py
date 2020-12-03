@@ -5,27 +5,40 @@
 from .Error import *
 from .Postgres import *
 import psycopg2 as psy
+import uuid
 import logging 
 import json
 
+####################################################################
+# back end functions to suport the words table in the mind database
+# all functions should return a list of word objects
+# or
+# return None (no return statment)
+####################################################################
+
+#
+# todo: add a function to get a word of a specified clock from words table 
+#
+
+####################################################################
+# word object 
 class word:
     def __init__(self, w: str, c: str, n:str, o:str):
         self.value = w
         self.clock = c
         self.new = bool(n)
         self.old = bool(o)
-    def json(self):
-        return {'word' : self.value, 'clock' : str(self.clock), 'new' : self.new, 'old' : self.old}
 
-# convert word responce into word obj
-# stop rewriteing code
+    def json(self):
+        return {'word' : self.value, 'clock' : str(self.clock.isoformat()), 'new' : self.new, 'old' : self.old}
+
+# convert a sql responce into word object
 def wordobj(wrd = None):
     if wrd is None:
         raise TypeError
     return word(wrd[0], wrd[1], wrd[2], wrd[3])
 
-## format a responce list into a list of word objects
-# stop rewriting code
+## format a list of sql responces to a list of word objects
 def formatwordlist(wrds = None):
     if wrds is None:
         raise TypeError
@@ -33,6 +46,7 @@ def formatwordlist(wrds = None):
     for item in wrds:
         ret.append(wordobj(item))
     return ret
+####################################################################
     
 # set a word to the Words table in the Mind
 # rasie type error is wrd is not a string
@@ -75,19 +89,22 @@ def Get(wrd: str):
         qry = "select * from words where lect=\'"+str(wrd)+"\';"
         check = dbq(qry)
         if check is None:
-            raise WordsError("get none")
-        return wordobj(check)
+            raise WordsError('words get error, query returned none')
+        # return a list that contains a single word object
+        return [wordobj(check)]
 
 # get the most recent word info from Words table in the Mind
+# cut the list from beginning to index
 # return false if err
-def Recent():
-    # todo: add a time variable to recal a specific time
-    # todo: time should be aproximate
-    qry = "select * from words where clock=(select MAX(clock) from words);"
-    check = dbq(qry)
-    if check is None:
-        raise WordsError("recent none") 
-    return wordobj(check)
+def Recent(size = None):
+    qry = "select * from words order by clock desc;"
+    check = dbq(qry,size)
+    if check is None or len(check) == 0:
+        raise WordsError('recent words error, query returned none') 
+    if not isinstance(check,list):
+        # return a list that contains a single word object
+        return [wordobj(check)]
+    return formatwordlist(check)
 
 # get all new words from Words table in Mind
 # most recently used words first
@@ -96,7 +113,7 @@ def Novel(size = None):
     qry = "select * from words where new=True order by clock;"
     check = dbq(qry,size)
     if check is None or len(check) == 0:
-        raise WordsError("novel none")
+        raise WordsError('novel words error, query returned none')
     if not isinstance(check,list):
         return [wordobj(check)]
     return formatwordlist(check)
@@ -108,7 +125,7 @@ def Old(size = None):
     qry = "select * from words where old=True order by clock;"
     check = dbq(qry,size)
     if check is None or len(check) == 0:
-        raise WordsError("old none")
+        raise WordsError('old words error, query returned none')
     if not isinstance(check,list):
         return [wordobj(check)]
     return formatwordlist(check)

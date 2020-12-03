@@ -1,8 +1,9 @@
 import requests 
 import logging
+import sys
 ## test the routes set in Server.py 
 
-HOST = 'http://127.0.0.1:8080'
+HOST = 'http://127.0.0.1:'
 HEADER = {'Content-type' : 'application/json', 'Accept' : 'text/plain'}
 
 ## test the set word route /setword
@@ -21,25 +22,27 @@ def test_route_get_word(wrd: str):
             headers = HEADER)
     return (r.status_code,r.json())
 
-## test the get recent word route /recentword
+## test the get recent min route /recentwords
 def test_route_recent_word():
     r = requests.post(
-            url = HOST + '/recentword')
-    return (r.status_code,r.json())
-
-## test the get novel word route /novelword
-def test_route_novel_word():
-    r = requests.post(
-            url = HOST + '/novelword',
-            data = {'size' : 5},
+            url = HOST + '/recentwords',
+            data = {'length': 5},
             headers = HEADER)
     return (r.status_code,r.json())
 
-## test the get old word route /oldword
+## test the get novel word route /novelwords
+def test_route_novel_word():
+    r = requests.post(
+            url = HOST + '/novelwords',
+            data = {'length' : 5},
+            headers = HEADER)
+    return (r.status_code,r.json())
+
+## test the get old word route /oldwords
 def test_route_old_word():
     r = requests.post(
-            url = HOST + '/oldword',
-            data = {'size' : 5},
+            url = HOST + '/oldwords',
+            data = {'length' : 5},
             headers = HEADER)
     return (r.status_code,r.json())
 
@@ -82,8 +85,8 @@ def test_route_sleep():
 
 ## unit test for word routes
 def unit_test_word():
-    print(test_route_set_word('summary'))
-    print(test_route_get_word('summary'))
+    print(test_route_set_word('water'))
+    print(test_route_get_word('boat'))
     print(test_route_recent_word())
     print(test_route_novel_word())
     print(test_route_old_word())
@@ -109,9 +112,13 @@ def unit_test_sleep():
 ## run unit tests                ##
 ###################################
 if __name__=="__main__":
-    unit_test_word()
-    unit_test_memory()
-    unit_test_sleep()
+    if len(sys.argv)>1 :
+        HOST = HOST+sys.argv[1]
+        unit_test_word()
+        unit_test_memory()
+        unit_test_sleep()
+    else:
+        print('[USAGE] python3 TestClient.py <port number of server>')
 
 
 

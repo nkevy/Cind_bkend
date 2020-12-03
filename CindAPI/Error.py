@@ -40,7 +40,7 @@ def forbiden(ss = None):
         raise TypeError
     if not isinstance(ss,str):
         raise TypeError
-    avoid = [',','.','/','\\','[',']','+','-','=','\'','\"',';',':','?','!','@','#','$',' ','{','}']
+    avoid = [',','.','/','\\','[',']','+','-','=','\'','\"',';',':','?','!','@','#','$',' ','{','}','<','>']
     return any(item in ss for item in avoid)
 
 #EOF

@@ -12,7 +12,11 @@ def to_json(ll: list):
         ret.append(i.json())
     return ret
 
-
+# not used 
+def success_json(bvalue: bool, data = None):
+    if data is None:
+        return json.dumps([{'success' : bvalue}])
+    return json.dumps([{'success' : bvalue}] + data)
 ##########################################
 ##      Words                           ##
 ##########################################
@@ -30,17 +34,17 @@ def words_set(ss: str):
 # if return json
 def words_get(ss: str):
     try:
-        ret = to_json([cpi.Words.Get(ss)])
+        ret = to_json(cpi.Words.Get(ss))
         return json.dumps([{'success' : True}] + ret)
     except (cpi.Error.ForbidenError, cpi.Error.WordsError) as error:
         return json.dumps({'success' : False})
 
-# get most recent word added to Words table 
-# put word object in list format
+# get recent words added to Words table 
+# cut list from beginning to index arg
 # return json
-def words_recent():
+def words_recentlist(size = None):
     try:
-        ret = to_json([cpi.Words.Recent()])
+        ret = to_json(cpi.Words.Recent(size))
         return json.dumps([{'success' : True}] + ret)
     except (cpi.Error.WordsErrror) as error:
         return json.dumps([{'success' : False}])
@@ -81,7 +85,7 @@ def memory_set(w1:str, w2:str, decrement=False):
 # return json
 def memory_get(w1:str, w2:str):
     try:
-        ret = to_json([cpi.Memory.Get(w1,w2)])
+        ret = to_json(cpi.Memory.Get(w1,w2))
         return json.dumps([{'success' : True}] + ret)
     except (cpi.Error.MemoriesError) as error:
         return json.dumps([{'success' : False}])
@@ -181,8 +185,8 @@ def unit_test_sleep(num):
 # run tests 
 if __name__ == "__main__":
     print("API Testing...")
-    unit_test_words('H',2)
-    unit_test_words('I',2)
-    unit_test_memory('H','I',30,False)
+    unit_test_words('sun',2)
+    unit_test_words('rain',2)
+    unit_test_memory('warm','sunny',30,False)
     unit_test_sleep(30)
     
