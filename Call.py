@@ -132,7 +132,7 @@ def unit_test_words(wrd,num):
         print("returned:",end='')
         print(ret)
         print("get recent word:")
-        ret = words_recent()
+        ret = words_recentlist(num)
         print("returned:",end='')
         print(ret)
         print("get novel word list:")
