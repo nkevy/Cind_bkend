@@ -51,6 +51,9 @@ def formatmemorylist(memlist = None):
 def Set(w1: str, w2, decrement = False):
     if forbiden(w1) or forbiden(w2):
         raise ForbidenError
+    # remove whitespace
+    w1 = w1.strip()
+    w2 = w2.strip()
     qry = "select dyad from memory where src=\'{}\' and dst=\'{}\';".format(w1,w2)
     ins = ""
     rank = dbq(qry)
@@ -69,6 +72,9 @@ def Set(w1: str, w2, decrement = False):
 def Get(w1: str , w2: str):
     if forbiden(w1) or forbiden(w2):
         raise ForbidenError
+    # remove whitespace
+    w1 = w1.strip()
+    w2 = w2.strip()
     qry = "select dyad from memory where src=\'{}\' and dst=\'{}\';".format(w1,w2)
     check = dbq(qry)
     if check is None:
@@ -82,6 +88,8 @@ def Get(w1: str , w2: str):
 def GetList(w1: str, size=None):
     if forbiden(w1):
         raise ForbidenError
+    # remove whitespace
+    w1 = w1.strip()
     qry = "select * from memory where src=\'{}\' order by dyad;".format(w1)
     check = dbq(qry,size)
     if check is None:

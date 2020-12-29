@@ -46,7 +46,7 @@ def words_recentlist(size = None):
     try:
         ret = to_json(cpi.Words.Recent(size))
         return json.dumps([{'success' : True}] + ret)
-    except (cpi.Error.WordsErrror) as error:
+    except (cpi.Error.WordsError) as error:
         return json.dumps([{'success' : False}])
 
 # get a list of new words from Words table
@@ -185,8 +185,8 @@ def unit_test_sleep(num):
 # run tests 
 if __name__ == "__main__":
     print("API Testing...")
-    unit_test_words('sun',2)
+    unit_test_words('sun is ',2)
     unit_test_words('rain',2)
-    unit_test_memory('warm','sunny',30,False)
+    unit_test_memory('warm ','sunny',30,False)
     unit_test_sleep(30)
     

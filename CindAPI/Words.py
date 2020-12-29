@@ -54,6 +54,8 @@ def formatwordlist(wrds = None):
 def Set(wrd: str):
         if forbiden(wrd):
             raise ForbidenError
+        # remove extra whitespace
+        wrd = wrd.strip()
         qry = "select clock from words where lect=\'"+str(wrd)+"\';"
         add_new = "insert into words(lect,clock,new,old) values(\'"+str(wrd)+"\',CURRENT_TIMESTAMP,true,false) returning clock;"
         add_old = "update words set clock=CURRENT_TIMESTAMP where lect=\'"+str(wrd)+"\';"
@@ -86,6 +88,8 @@ def Set(wrd: str):
 def Get(wrd: str):
         if forbiden(wrd):
             raise ForbidenError
+        # remove whitespace
+        wrd = wrd.strip()
         qry = "select * from words where lect=\'"+str(wrd)+"\';"
         check = dbq(qry)
         if check is None:

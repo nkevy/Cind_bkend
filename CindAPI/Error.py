@@ -33,6 +33,7 @@ class ForbidenError(Exception):
         self.expression = expression
         self.message = message
 
+
 # check if a string contains forbiden char(s) 
 # raise tyoe error
 def forbiden(ss = None):
@@ -40,7 +41,7 @@ def forbiden(ss = None):
         raise TypeError
     if not isinstance(ss,str):
         raise TypeError
-    avoid = [',','.','/','\\','[',']','+','-','=','\'','\"',';',':','?','!','@','#','$',' ','{','}','<','>']
+    avoid = [',','.','/','\\','[',']','+','-','=','\'','\"',';',':','?','!','@','#','$','{','}','<','>','%','&','^','(',')']
     return any(item in ss for item in avoid)
 
 #EOF
